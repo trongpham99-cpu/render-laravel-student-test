@@ -4,20 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
-use Illuminate\Support\Facades\Redis;
 
 class StudentController extends Controller
 {
     public function index()
     {
-        if (Redis::exists('students_list')) {
-            $students = json_decode(Redis::get('students_list'));
-            return view('students.index', compact('students'));
-        }
-
-        $students = Student::all();
-        Redis::set('students_list', json_encode($students));
-
+        $students = Student::latest()->paginate(5);
         return view('students.index', compact('students'));
     }
 
